@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Web Course - Landing Page</title>
+<link rel="stylesheet" href="styles.css">
+<style>
+  /* Base Layout */
+  body { 
+    overflow: auto; height: auto; min-height: 100vh; display: flex; flex-direction: column; 
+    background-color: #050510; /* Dark premium bg */
+    color: #f8fafc;
+    position: relative;
+    z-index: 0;
+  }
+  
+  /* Mesh Background Globs */
+  .bg-glow-1 {
+    position: absolute; top: -20vh; left: -10vw; width: 60vw; height: 60vw;
+    background: radial-gradient(circle, rgba(99,102,241,0.25) 0%, rgba(0,0,0,0) 60%);
+    z-index: -1; pointer-events: none; filter: blur(40px);
+  }
+  .bg-glow-2 {
+    position: absolute; bottom: -20vh; right: -10vw; width: 50vw; height: 50vw;
+    background: radial-gradient(circle, rgba(236,72,153,0.2) 0%, rgba(0,0,0,0) 60%);
+    z-index: -1; pointer-events: none; filter: blur(40px);
+  }
+
+  /* Glassmorphism Classes */
+  .glass-panel {
+    background: rgba(255, 255, 255, 0.03) !important;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.05) !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-left: 1px solid rgba(255, 255, 255, 0.08) !important;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+    color: #e2e8f0;
+  }
+
+  /* Overrides for specific components */
+  .landing-nav { 
+    display: flex; justify-content: space-between; align-items: center; padding: 20px 40px; 
+    background: rgba(5, 5, 16, 0.6) !important; 
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid rgba(255,255,255,0.05) !important;
+    position: sticky; top: 0; z-index: 50;
+  }
+  .landing-nav a { text-decoration: none; color: #cbd5e1; font-weight: 600; margin-left: 20px; transition: color 0.2s, text-shadow 0.2s; }
+  .landing-nav a:hover { color: #fff; text-shadow: 0 0 10px rgba(255,255,255,0.4); }
+  
+  .hero { text-align: center; padding: 120px 20px; }
+  .hero h1 { 
+    font-size: 64px; 
+    margin-bottom: 24px; 
+    font-weight: 800;
+    background: linear-gradient(to right, #818cf8, #e879f9, #f472b6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -1px;
+  }
+  .hero p { font-size: 22px; color: #94a3b8; max-width: 700px; margin: 0 auto 40px; line-height: 1.6; }
+  
+  .btn-primary {
+    background: linear-gradient(135deg, #6366f1, #a855f7) !important;
+    box-shadow: 0 10px 20px -10px rgba(99,102,241,0.8);
+    border: 1px solid rgba(255,255,255,0.2) !important;
+  }
+  .btn-primary:hover { box-shadow: 0 15px 30px -10px rgba(99,102,241,1); }
+
+  section.section-padding { background: transparent !important; border: none !important; }
+
+  .curriculum-section { padding: 40px 20px 80px; max-width: 1000px; margin: 0 auto; text-align: center; }
+  .curriculum-section h2 { font-size: 36px; margin-bottom: 40px; color: #fff; }
+  .curriculum-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; text-align: left; }
+  
+  .curriculum-card, .feature-box {
+    padding: 24px; border-radius: var(--radius);
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s;
+  }
+  .curriculum-card:hover, .feature-box:hover {
+    border-color: rgba(99,102,241,0.4);
+    box-shadow: 0 10px 30px -10px rgba(99,102,241,0.2);
+  }
+  .curriculum-card h3, .feature-box h3 { font-size: 18px; color: #fff; margin-bottom: 10px; }
+  .curriculum-card p, .feature-box p { font-size: 14px; color: #94a3b8; line-height: 1.5; }
+  .curriculum-card ul { color: #94a3b8 !important; }
+
+  .site-footer { background: transparent !important; border-top: 1px solid rgba(255,255,255,0.05) !important; }
+  
+  /* Modal Overrides */
+  .modal { background: rgba(15,23,42,0.8) !important; backdrop-filter: blur(24px); border: 1px solid rgba(255,255,255,0.1) !important; color: #fff !important; }
+  .modal h3 { color: #fff !important; }
+  .modal input { background: rgba(0,0,0,0.3) !important; border: 1px solid rgba(255,255,255,0.1) !important; color: #fff !important; }
+  .modal input:focus { border-color: #818cf8 !important; }
+</style>
+</head>
+<body>
+  <div class="bg-glow-1"></div>
+  <div class="bg-glow-2"></div>
+  
+  <nav class="landing-nav">
+    <h2 style="margin: 0;">🚀 AI Web Course</h2>
+    <div>
+      <a href="index.html">Home</a>
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
+      <a href="#" id="nav-auth-btn" onclick="openAuthModal()" style="color: var(--accent);">Login / Register</a>
+    </div>
+  </nav>
+
+  <main class="hero animate-fade-up">
+    <h1>Learn to Build Websites with AI</h1>
+    <p>Join the interactive course today. Generate, design, and deploy web applications without writing a single line of code manually. Pay once, learn forever.</p>
+    <button class="btn btn-primary" style="font-size: 18px; padding: 16px 36px; border-radius: 8px; border: none; background: var(--accent); color: #fff; cursor: pointer; transition: transform 0.2s;" onclick="openAuthModal()" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">Get Access Now</button>
+  </main>
+
+  <section class="section-padding animate-fade-up" style="background: var(--card); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); margin-top: 40px;">
+    <div style="text-align: center; margin-bottom: 40px;">
+      <h2 style="font-size: 36px; margin-bottom: 10px; color: var(--text);">Why This Course?</h2>
+      <p style="color: var(--text-secondary);">Everything you need to go from idea to live website.</p>
+    </div>
+    <div class="features-grid">
+      <div class="feature-box">
+        <div class="feature-icon">🤖</div>
+        <h3 style="color: var(--text);">AI-Powered Learning</h3>
+        <p style="color: var(--text-secondary); margin-top: 10px;">Learn how to prompt AI effectively to generate code, saving you hundreds of hours of manual typing.</p>
+      </div>
+      <div class="feature-box">
+        <div class="feature-icon">🛠️</div>
+        <h3 style="color: var(--text);">Interactive Sandbox</h3>
+        <p style="color: var(--text-secondary); margin-top: 10px;">Write prompts, execute code, and preview your work instantly inside our custom learning portal.</p>
+      </div>
+      <div class="feature-box">
+        <div class="feature-icon">☁️</div>
+        <h3 style="color: var(--text);">Cloud Synced Progress</h3>
+        <p style="color: var(--text-secondary); margin-top: 10px;">Your progress is saved securely to the cloud. Start on your laptop and finish on your desktop seamlessly.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="curriculum-section animate-fade-up" style="animation-delay: 0.1s; padding-top: 80px;">
+    <h2>Course Curriculum</h2>
+    <div style="position: relative; max-height: 520px; overflow: hidden; border-radius: var(--radius);">
+      <div class="curriculum-grid">
+        <div class="curriculum-card">
+          <h3>1. Think Like a Builder</h3>
+          <p>Know your user before you build. User personas, information architecture, and the fundamentals of writing effective AI prompts.</p>
+          <ul style="margin-top: 15px; padding-left: 20px; font-size: 14px; color: var(--text-secondary);">
+            <li>Course Overview & Workspace Setup</li>
+            <li>The User Snapshot (UX Research)</li>
+            <li>Your First AI Prompt</li>
+            <li>Activity: Write Your User Persona</li>
+          </ul>
+        </div>
+        <div class="curriculum-card">
+          <h3>2. Your First Web Page</h3>
+          <p>HTML structure deep dive, accessibility basics, semantic tags, and structuring content for real users.</p>
+          <ul style="margin-top: 15px; padding-left: 20px; font-size: 14px; color: var(--text-secondary);">
+            <li>HTML Structure Deep Dive</li>
+            <li>Information Architecture</li>
+            <li>Accessibility Basics</li>
+            <li>Activity: Build Your About Page</li>
+          </ul>
+        </div>
+        <div class="curriculum-card">
+          <h3>3. Make It Look Good</h3>
+          <p>CSS fundamentals, visual hierarchy, color theory, typography, and responsive design principles.</p>
+          <ul style="margin-top: 15px; padding-left: 20px; font-size: 14px; color: var(--text-secondary);">
+            <li>CSS Fundamentals</li>
+            <li>Visual Hierarchy</li>
+            <li>Color, Typography & Contrast</li>
+            <li>Activity: Style Your Page</li>
+          </ul>
+        </div>
+        <div class="curriculum-card">
+          <h3>4. Bring It to Life</h3>
+          <p>JavaScript basics, DOM manipulation, interaction design (IxD), and building real functional features.</p>
+          <ul style="margin-top: 15px; padding-left: 20px; font-size: 14px; color: var(--text-secondary);">
+            <li>JavaScript Basics</li>
+            <li>Interaction Design (IxD)</li>
+            <li>Add a Real Feature</li>
+            <li>Activity: Build an Interactive Element</li>
+          </ul>
+        </div>
+        <div class="curriculum-card">
+          <h3>5. Build a Multi-Page Site</h3>
+          <p>Navigation design, user flows, folder structures, and wireframing best practices before writing code.</p>
+          <ul style="margin-top: 15px; padding-left: 20px; font-size: 14px; color: var(--text-secondary);">
+            <li>Folder Structure & Shared Components</li>
+            <li>Navigation Design & User Flows</li>
+            <li>Wireframing Before You Build</li>
+            <li>Activity: Build 3 Pages</li>
+          </ul>
+        </div>
+        <div class="curriculum-card">
+          <h3>6. Get It Online</h3>
+          <p>Hosting options, deploying to GitHub Pages, and setting up Microsoft Clarity analytics.</p>
+          <ul style="margin-top: 15px; padding-left: 20px; font-size: 14px; color: var(--text-secondary);">
+            <li>Choose Your Hosting Path</li>
+            <li>Deploy to GitHub Pages</li>
+            <li>Set Up Analytics</li>
+            <li>Activity: Go Live</li>
+          </ul>
+        </div>
+        <div class="curriculum-card">
+          <h3>7. Fix, Improve, Iterate</h3>
+          <p>Usability testing, interpreting heatmaps, data-driven design, and mobile-first refinement.</p>
+          <ul style="margin-top: 15px; padding-left: 20px; font-size: 14px; color: var(--text-secondary);">
+            <li>Mobile Responsiveness</li>
+            <li>Usability Testing</li>
+            <li>Data-Driven Improvements</li>
+            <li>Activity: Test & Fix</li>
+          </ul>
+        </div>
+        <div class="curriculum-card">
+          <h3>8. Capstone: Build & Launch</h3>
+          <p>Your final project. Validate with real users, iterate based on feedback, and officially launch your site.</p>
+          <ul style="margin-top: 15px; padding-left: 20px; font-size: 14px; color: var(--text-secondary);">
+            <li>Project Planning & Problem Statement</li>
+            <li>Competitive Research</li>
+            <li>The Build Sprint</li>
+            <li>Activity: Launch & Validate</li>
+          </ul>
+        </div>
+      </div>
+      <div style="position: absolute; bottom: 0; left: 0; right: 0; height: 350px; background: linear-gradient(to bottom, rgba(5,5,16,0), rgba(5,5,16,1) 80%); display: flex; align-items: flex-end; justify-content: center; padding-bottom: 20px; z-index: 10;">
+        <button class="btn btn-primary" style="font-size: 18px; padding: 14px 32px; border-radius: 8px; font-weight: bold; border: none; cursor: pointer; transform: translateY(-20px); box-shadow: 0 0 30px rgba(99,102,241,0.6);" onclick="openAuthModal()">Unlock Full Curriculum</button>
+      </div>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <div class="footer-links">
+      <a href="index.html">Home</a>
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
+    </div>
+    <p>&copy; 2026 AI Web Course. All rights reserved. Master AI Web Development.</p>
+  </footer>
+
+  <!-- Auth & Payment Modal -->
+  <div class="modal-overlay" id="auth-modal">
+    <div class="modal" style="text-align: left;">
+      <h3>Login / Register</h3>
+      <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 20px;">
+        Sign in to access the course. New users must register first, and then make a one-time payment to unlock the course.
+      </p>
+      
+      <input type="email" id="auth-email" placeholder="Email address" required>
+      <input type="password" id="auth-password" placeholder="Password" required minlength="6">
+      <div id="auth-error" style="color: red; font-size: 13px; margin-bottom: 15px;"></div>
+      
+      <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+        <button style="flex:1; padding: 12px; background: var(--bg); color: var(--text); border: 1px solid var(--border); border-radius: 8px; cursor: pointer; font-weight: 600; transition: 0.2s;" onclick="loginEmail()" onmouseover="this.style.background='var(--border)'" onmouseout="this.style.background='var(--bg)'">Login</button>
+        <button style="flex:1; padding: 12px; background: var(--accent); color: #fff; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; transition: 0.2s;" onclick="registerEmail()" onmouseover="this.style.background='#4f46e5'" onmouseout="this.style.background='var(--accent)'">Register</button>
+      </div>
+
+      <div style="text-align: center;">
+        <button style="background:none;border:none;color:var(--text-secondary);text-decoration:underline;cursor:pointer;font-size:14px;" onclick="closeAuthModal()">Cancel</button>
+      </div>
+    </div>
+    </div>
+  </div>
+
+  <!-- Payment Modal -->
+  <div class="modal-overlay" id="payment-modal">
+    <div class="modal" style="text-align: left;">
+      <h3>Unlock Course Access</h3>
+      <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 20px;">
+        You're one step away! Complete your one-time payment to get full lifetime access.
+      </p>
+      
+      <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.1);">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+          <span>Course Price</span>
+          <span style="text-decoration: line-through; color: var(--text-secondary);">NGN 10,000</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; font-size: 20px; font-weight: bold; color: var(--success);">
+          <span>Discounted Price</span>
+          <span id="final-price">NGN 7,000</span>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 10px; margin-bottom: 5px;">
+        <input type="text" id="coupon-code" placeholder="Enter Coupon Code" style="margin-bottom: 0;">
+        <button onclick="applyCoupon()" style="padding: 0 15px; background: rgba(255,255,255,0.1); color: #fff; border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; cursor: pointer; transition: 0.2s;">Apply</button>
+      </div>
+      <div id="coupon-msg" style="font-size: 13px; margin-bottom: 15px; height: 18px;"></div>
+
+      <button id="pay-btn" style="width: 100%; padding: 14px; background: linear-gradient(135deg, #10b981, #059669); color: #fff; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 16px; transition: 0.2s; box-shadow: 0 4px 15px rgba(16,185,129,0.3);" onclick="startPayment()">Pay Securely with Paystack</button>
+      
+      <div style="text-align: center; margin-top: 15px;">
+        <button style="background:none;border:none;color:var(--text-secondary);text-decoration:underline;cursor:pointer;font-size:14px;" onclick="closePaymentModal()">Cancel & Log Out</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://js.paystack.co/v1/inline.js"></script>
+  <script>
+    // ==== CONFIGURATION ====
+    const SUPABASE_URL = 'https://dqstvnijadnshyyxuskb.supabase.co'; // <-- ADD YOUR SUPABASE URL HERE
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRxc3R2bmlqYWRuc2h5eXh1c2tiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg5NDI3MzgsImV4cCI6MjA5NDUxODczOH0.mTUx0A78t6CAWE59VeZ5cgzSKZLCP5_hOwe2vCda8YE'; // <-- ADD YOUR SUPABASE ANON KEY HERE
+    const PAYSTACK_PUBLIC_KEY = 'pk_test_852ca01694d583df960030dd0e4ce8d019c28327'; // <-- ADD YOUR PAYSTACK PUBLIC KEY HERE
+
+    let supaClient = null;
+    let paymentPrompted = false;
+
+    if (SUPABASE_URL && SUPABASE_KEY && window.supabase) {
+      supaClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+      
+      const handleSession = (session) => {
+        if (!session?.user) {
+          document.getElementById('nav-auth-btn').textContent = 'Login / Register';
+          return;
+        }
+        
+        document.getElementById('nav-auth-btn').textContent = 'My Course';
+        
+        if (session.user.user_metadata?.has_paid) {
+          window.location.href = 'course.html';
+        } else if (!paymentPrompted) {
+          paymentPrompted = true;
+          closeAuthModal();
+          triggerPaystack(session.user.email);
+        }
+      };
+
+      supaClient.auth.getSession().then(({ data: { session } }) => handleSession(session));
+      supaClient.auth.onAuthStateChange((_event, session) => handleSession(session));
+    }
+
+    function openAuthModal() { 
+      if (supaClient) {
+        supaClient.auth.getSession().then(({ data: { session } }) => {
+          if (session?.user) {
+            if (session.user.user_metadata?.has_paid) {
+              window.location.href = 'course.html';
+            } else {
+              triggerPaystack(session.user.email);
+            }
+          } else {
+            document.getElementById('auth-modal').classList.add('show');
+          }
+        });
+      } else {
+        document.getElementById('auth-modal').classList.add('show');
+      }
+    }
+    
+    function closeAuthModal() { document.getElementById('auth-modal').classList.remove('show'); document.getElementById('auth-error').textContent = ''; }
+
+    async function loginEmail() {
+      if (!supaClient) return alert('Configure Supabase credentials first.');
+      const email = document.getElementById('auth-email').value;
+      const password = document.getElementById('auth-password').value;
+      const errDiv = document.getElementById('auth-error');
+      
+      errDiv.textContent = 'Logging in...';
+      const { error } = await supaClient.auth.signInWithPassword({ email, password });
+      if (error) errDiv.textContent = error.message;
+    }
+
+    async function registerEmail() {
+      if (!supaClient) return alert('Configure Supabase credentials first.');
+      const email = document.getElementById('auth-email').value;
+      const password = document.getElementById('auth-password').value;
+      const errDiv = document.getElementById('auth-error');
+      
+      if (!email || !password) {
+        errDiv.textContent = 'Email and password are required.';
+        return;
+      }
+
+      errDiv.textContent = 'Creating account...';
+      const { data, error } = await supaClient.auth.signUp({ email, password });
+      if (error) {
+        errDiv.textContent = error.message;
+      } else {
+        errDiv.textContent = 'Account created! Initializing payment...';
+        
+        // Force the payment modal to open immediately to ensure UX doesn't get stuck
+        paymentPrompted = true;
+        closeAuthModal();
+        triggerPaystack(email);
+      }
+    }
+
+    let currentPrice = 7000;
+
+    function triggerPaystack(email) {
+      document.getElementById('payment-modal').classList.add('show');
+    }
+
+    async function closePaymentModal() { 
+      document.getElementById('payment-modal').classList.remove('show'); 
+      if (supaClient) await supaClient.auth.signOut();
+      window.location.reload();
+    }
+
+    function applyCoupon() {
+      const code = document.getElementById('coupon-code').value.trim().toUpperCase();
+      const msg = document.getElementById('coupon-msg');
+      // Simple logic: if they have a coupon, drop price to 5000. Edit this condition as needed.
+      if (code === 'EARLYBIRD' || code === 'DISCOUNT') {
+        currentPrice = 5000;
+        document.getElementById('final-price').textContent = 'NGN 5,000';
+        msg.textContent = 'Coupon applied successfully!';
+        msg.style.color = 'var(--success)';
+      } else {
+        msg.textContent = 'Invalid coupon code.';
+        msg.style.color = '#ef4444';
+      }
+    }
+
+    function startPayment() {
+      const payBtn = document.getElementById('pay-btn');
+      const originalText = payBtn.textContent;
+      payBtn.textContent = 'Initializing...';
+
+      if (!PAYSTACK_PUBLIC_KEY || PAYSTACK_PUBLIC_KEY.includes('...')) {
+        alert("Payment Gateway is not configured yet.");
+        payBtn.textContent = originalText;
+        return;
+      }
+
+      supaClient.auth.getSession().then(({ data: { session }, error }) => {
+        if (error) {
+          alert("Error checking session: " + error.message);
+          payBtn.textContent = originalText;
+          return;
+        }
+
+        if (!session || !session.user) {
+          alert("We couldn't verify your account. If you just registered, you may need to confirm your email address first, then log in to pay.");
+          payBtn.textContent = originalText;
+          return;
+        }
+        
+        let handler = PaystackPop.setup({
+          key: PAYSTACK_PUBLIC_KEY, 
+          email: session.user.email,
+          amount: currentPrice * 100, 
+          currency: 'NGN', 
+          callback: function(response) {
+            payBtn.textContent = 'Updating account...';
+            supaClient.auth.updateUser({ data: { has_paid: true } }).then(() => {
+              alert("Payment Successful! Welcome to the course.");
+              window.location.href = 'course.html';
+            });
+          },
+          onClose: function() {
+            // They closed the Paystack iframe, but our payment modal remains open
+            payBtn.textContent = originalText;
+          }
+        });
+        handler.openIframe();
+      }).catch(err => {
+        alert("System Error: " + err.message);
+        payBtn.textContent = originalText;
+      });
+    }
+  </script>
+</body>
+</html>

@@ -204,6 +204,47 @@
     .modal input:focus {
       border-color: #818cf8 !important;
     }
+    .password-field {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .password-field input {
+      padding-right: 40px;
+      width: 100%;
+    }
+
+    .pw-toggle {
+      position: absolute;
+      right: 8px;
+      background: transparent;
+      border: none;
+      color: #cbd5e1;
+      cursor: pointer;
+      font-size: 18px;
+      padding: 6px;
+    }
+
+    .pw-strength {
+      height: 8px;
+      background: rgba(255,255,255,0.06);
+      border-radius: 6px;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+
+    .pw-strength > div {
+      height: 100%;
+      width: 0%;
+      transition: width 0.2s ease;
+    }
+
+    .pw-strength-text {
+      font-size: 12px;
+      color: #94a3b8;
+      margin-top: 6px;
+    }
   </style>
 </head>
 
@@ -384,20 +425,37 @@
 
       <div id="form-login">
         <input type="email" id="login-email" placeholder="Email address" required>
-        <input type="password" id="login-password" placeholder="Password" required minlength="6">
+        <div class="password-field">
+          <input type="password" id="login-password" placeholder="Password" required minlength="6" aria-label="Login password">
+          <button id="login-pw-toggle" class="pw-toggle" aria-pressed="false" onclick="togglePassword('login-password','login-pw-toggle')">👁️</button>
+        </div>
         <button id="btn-login"
           style="width: 100%; padding: 12px; background: var(--accent); color: #fff; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; transition: 0.2s; margin-top: 5px;"
           onclick="loginEmail()">Login</button>
       </div>
 
       <div id="form-register" style="display: none;">
+        <input type="text" id="reg-username" placeholder="Username (choose a unique handle)" required>
         <input type="text" id="reg-name" placeholder="Full Name" required>
         <input type="tel" id="reg-phone" placeholder="Phone Number" required>
-        <input type="text" id="reg-level" placeholder="Experience Level (e.g. Beginner)" required>
         <input type="email" id="reg-email" placeholder="Email address" required>
-        <input type="password" id="reg-password" placeholder="Password" required minlength="6">
+        <div class="password-field">
+          <input type="password" id="reg-password" placeholder="Password" required minlength="8" aria-label="Registration password">
+          <button id="reg-pw-toggle" class="pw-toggle" aria-pressed="false" onclick="togglePassword('reg-password','reg-pw-toggle')">👁️</button>
+        </div>
+        <div class="pw-strength" aria-hidden="true"><div id="reg-pw-strength-bar"></div></div>
+        <div id="reg-pw-strength-text" class="pw-strength-text"></div>
+
+        <label for="reg-level" style="font-size:13px;color:var(--text-secondary);margin-top:8px;display:block">Experience Level</label>
+        <select id="reg-level" required style="width:100%;padding:10px;margin-top:6px;background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.08);color:#fff;border-radius:6px;">
+          <option value="">Select level</option>
+          <option value="Beginner">Beginner</option>
+          <option value="Intermediate">Intermediate</option>
+          <option value="Experience">Experience</option>
+        </select>
+
         <button id="btn-register"
-          style="width: 100%; padding: 12px; background: var(--accent); color: #fff; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; transition: 0.2s; margin-top: 5px;"
+          style="width: 100%; padding: 12px; background: var(--accent); color: #fff; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; transition: 0.2s; margin-top: 12px;"
           onclick="registerEmail()">Register</button>
       </div>
 
@@ -554,16 +612,24 @@
 
     async function registerEmail() {
       if (!supaClient) return alert('Configure Supabase credentials first.');
-      const email = document.getElementById('reg-email').value;
+      const email = document.getElementById('reg-email').value.trim();
       const password = document.getElementById('reg-password').value;
-      const name = document.getElementById('reg-name').value;
-      const phone = document.getElementById('reg-phone').value;
+      const name = document.getElementById('reg-name').value.trim();
+      const phone = document.getElementById('reg-phone').value.trim();
       const level = document.getElementById('reg-level').value;
+      const username = document.getElementById('reg-username').value.trim();
       const errDiv = document.getElementById('auth-error');
       const btn = document.getElementById('btn-register');
 
-      if (!email || !password || !name || !phone || !level) {
+      if (!email || !password || !name || !phone || !level || !username) {
         errDiv.textContent = 'Please fill all fields.';
+        return;
+      }
+
+      // Basic password security checks
+      const strength = evaluatePasswordStrength(password);
+      if (strength.score < 3) {
+        errDiv.textContent = 'Password too weak. Use 8+ chars, mix letters, numbers, and symbols.';
         return;
       }
 
@@ -575,7 +641,7 @@
         email,
         password,
         options: {
-          data: { full_name: name, phone: phone, experience_level: level, has_paid: false }
+          data: { username: username, full_name: name, phone: phone, experience_level: level, has_paid: false }
         }
       });
 
@@ -590,6 +656,49 @@
         btn.disabled = false;
         btn.textContent = 'Register';
       }
+    }
+
+    // Toggle password visibility for inputs
+    function togglePassword(inputId, btnId) {
+      const input = document.getElementById(inputId);
+      const btn = document.getElementById(btnId);
+      if (!input) return;
+      const isHidden = input.type === 'password';
+      input.type = isHidden ? 'text' : 'password';
+      btn.setAttribute('aria-pressed', String(isHidden));
+      btn.textContent = isHidden ? '🙈' : '👁️';
+    }
+
+    // Simple password strength evaluator
+    function evaluatePasswordStrength(pw) {
+      let score = 0;
+      if (!pw) return { score: 0, label: 'Too short' };
+      if (pw.length >= 8) score++;
+      if (/[A-Z]/.test(pw)) score++;
+      if (/[0-9]/.test(pw)) score++;
+      if (/[^A-Za-z0-9]/.test(pw)) score++;
+      const labels = ['Very weak', 'Weak', 'Fair', 'Good', 'Strong'];
+      return { score: Math.min(score, 4), label: labels[Math.min(score, 4)] };
+    }
+
+    // Update register password strength UI
+    const regPw = document.getElementById('reg-password');
+    if (regPw) {
+      regPw.addEventListener('input', (e) => {
+        const val = e.target.value;
+        const out = evaluatePasswordStrength(val);
+        const bar = document.getElementById('reg-pw-strength-bar');
+        const txt = document.getElementById('reg-pw-strength-text');
+        if (bar) {
+          const pct = (out.score / 4) * 100;
+          bar.style.width = pct + '%';
+          if (out.score <= 1) bar.style.background = '#ef4444';
+          else if (out.score === 2) bar.style.background = '#f59e0b';
+          else if (out.score === 3) bar.style.background = '#60a5fa';
+          else bar.style.background = '#10b981';
+        }
+        if (txt) txt.textContent = out.label;
+      });
     }
 
     let currentPrice = 7000;

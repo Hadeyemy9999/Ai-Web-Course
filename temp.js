@@ -56,13 +56,27 @@
         }
 
         if (supaUser) {
-          if (btn) btn.textContent = '☁️ Cloud Sync (Logged In)';
+          if (btn) btn.textContent = '👤 Profile Settings';
           document.getElementById('supa-auth-forms').style.display = 'none';
           document.getElementById('supa-logged-in').style.display = 'block';
+
+          // Populate profile fields from user metadata
+          const meta = supaUser?.user_metadata || {};
+          const fullNameEl = document.getElementById('supa-full-name');
+          const emailEl = document.getElementById('supa-email-display');
+          const phoneEl = document.getElementById('supa-phone-display');
+          const usernameInput = document.getElementById('supa-username');
+          const darkModeCheckbox = document.getElementById('supa-dark-mode');
+          
+          if (fullNameEl) fullNameEl.textContent = meta.full_name || '—';
+          if (emailEl) emailEl.textContent = supaUser?.email || '—';
+          if (phoneEl) phoneEl.textContent = meta.phone || '—';
+          if (usernameInput) usernameInput.value = meta.username || '';
+          if (darkModeCheckbox) darkModeCheckbox.checked = document.body.classList.contains('dark-mode');
         }
 
         else {
-          if (btn) btn.textContent = '☁️ Cloud Sync (Login)';
+          if (btn) btn.textContent = '👤 Profile Setup (Login)';
           document.getElementById('supa-auth-forms').style.display = 'block';
           document.getElementById('supa-logged-in').style.display = 'none';
         }
@@ -102,6 +116,36 @@
 
       async function handleSupaLogout() {
         if (supaClient) await supaClient.auth.signOut();
+      }
+
+      async function saveProfileSettings() {
+        if (!supaClient || !supaUser) return;
+        const usernameInput = document.getElementById('supa-username');
+        const errDiv = document.getElementById('supa-error');
+        if (!usernameInput || !errDiv) return;
+
+        const username = usernameInput.value.trim();
+        errDiv.style.color = '#ef4444';
+        if (!username) {
+          errDiv.textContent = 'Enter a username.';
+          return;
+        }
+
+        errDiv.textContent = 'Saving username...';
+        const { data, error } = await supaClient.auth.updateUser({ data: { username: username } });
+        if (error) {
+          errDiv.textContent = error.message;
+          return;
+        }
+
+        supaUser = data.user || supaUser;
+        errDiv.style.color = '#10b981';
+        errDiv.textContent = 'Username updated.';
+      }
+
+      function handleDarkModeToggle(isDark) {
+        document.body.classList.toggle('dark-mode', isDark);
+        localStorage.setItem('lms-dark-mode', isDark);
       }
 
       function setAllSaveStatus(text, color) {

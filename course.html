@@ -185,18 +185,8 @@
       }
 
       async function syncToCloud() {
-        if (!supaClient || !supaUser) return;
-        const stateStr = localStorage.getItem('lms-state');
-        if (!stateStr) return;
-
-        const {
-          error
-        }
-
-          = await supaClient.from('user_progress').upsert({
-            id: supaUser.id, state_data: JSON.parse(stateStr)
-          });
-        if (error) console.error('Cloud save error:', error);
+        // placeholder — main syncToCloud is defined later in this file
+        return;
       }
 
       async function syncFromCloud() {
@@ -726,6 +716,10 @@
       }
 
       // Sync to Supabase for authenticated users
+      function setAllSaveStatus(text, color) {
+        document.querySelectorAll('[id^="save-status-"]').forEach(el => { el.textContent = text; el.style.color = color; });
+      }
+
       async function syncToCloud() {
         if (!supaClient) return;
         try {
@@ -742,10 +736,19 @@
           const { data: { session } } = await supaClient.auth.getSession();
           if (!session || !session.user) return;
 
-          await supaClient.from('user_progress').upsert({ user_id: session.user.id, state }, { returning: 'minimal' });
+          const { error } = await supaClient.from('user_progress').upsert({ user_id: session.user.id, state }, { returning: 'minimal' });
+          if (error) {
+            console.error('Cloud sync failed', error);
+            setAllSaveStatus('Cloud save failed', '#ef4444');
+            return;
+          }
+
+          // mark saved to cloud
+          setAllSaveStatus('Saved to cloud', '#10b981');
           console.log('Synced progress to cloud');
         } catch (err) {
           console.error('Cloud sync failed', err);
+          setAllSaveStatus('Cloud save failed', '#ef4444');
         }
       }
 
@@ -923,7 +926,7 @@
         step.activityText || ''
       }
 
-      </textarea> </div> `;
+      </textarea> <div class="save-status" id="save-status-${currentModule}-${currentStep}" style="font-size:13px;color:var(--text-secondary);margin-top:8px;">Not saved</div> </div> `;
 
         // Checklist (only on last step)
         if (isLastStep) {
@@ -1004,6 +1007,9 @@
 
       function saveActivity(mi, si, value) {
         modules[mi].steps[si].activityText = value;
+        modules[mi].steps[si].dirty = true;
+        const statusEl = document.getElementById(`save-status-${mi}-${si}`);
+        if (statusEl) { statusEl.textContent = 'Saved locally'; statusEl.style.color = '#60a5fa'; }
         saveState();
       }
 

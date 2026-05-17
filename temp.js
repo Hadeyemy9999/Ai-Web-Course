@@ -104,6 +104,10 @@
         if (supaClient) await supaClient.auth.signOut();
       }
 
+      function setAllSaveStatus(text, color) {
+        document.querySelectorAll('[id^="save-status-"]').forEach(el => { el.textContent = text; el.style.color = color; });
+      }
+
       async function syncToCloud() {
         if (!supaClient || !supaUser) return;
         const stateStr = localStorage.getItem('lms-state');
@@ -111,8 +115,13 @@
         try {
           const stateObj = JSON.parse(stateStr);
           const { error } = await supaClient.from('user_progress').upsert({ user_id: supaUser.id, state: stateObj }, { returning: 'minimal' });
-          if (error) console.error('Cloud save error:', error);
-        } catch (err) { console.error('Cloud save error', err); }
+          if (error) {
+            console.error('Cloud save error:', error);
+            setAllSaveStatus('Cloud save failed', '#ef4444');
+            return;
+          }
+          setAllSaveStatus('Saved to cloud', '#10b981');
+        } catch (err) { console.error('Cloud save error', err); setAllSaveStatus('Cloud save failed', '#ef4444'); }
       }
 
       async function syncFromCloud() {
@@ -764,20 +773,7 @@
       </div> <p style="font-size:13px;color:var(--text-secondary);margin-top:8px;" >Paste this prompt into ChatGPT, Claude, or Gemini. Replace the bracketed placeholders with your own details.</p> </div> `;
 
         // Activity card
-        html += ` <div class="card" > <div class="activity-label" >✏️ Your Activity — Type Your Response</div> <p>$ {
-        step.activity
-      }
-
-      </p> <textarea id="activity-${currentModule}-${currentStep}"
-      placeholder="Type your answer here... Your work auto-saves as you type."
-      oninput="saveActivity(${currentModule}, ${currentStep}, this.value)"
-
-      >$ {
-        step.activityText || ''
-      }
-
-      </textarea> <div class="save-hint" >💾 Auto-saved to your browser</div> </div> `;
-      </textarea> </div> `;
+        html += ` <div class="card" > <div class="activity-label" >✏️ Your Activity — Type Your Response</div> <p>${step.activity}</p> <textarea id="activity-${currentModule}-${currentStep}" placeholder="Type your answer here... Your work auto-saves as you type." oninput="saveActivity(${currentModule}, ${currentStep}, this.value)">${step.activityText || ''}</textarea> <div class="save-status" id="save-status-${currentModule}-${currentStep}" style="font-size:13px;color:var(--text-secondary);margin-top:8px;">Not saved</div> </div> `;
 
         // Checklist (only on last step)
         if (isLastStep) {
@@ -858,6 +854,9 @@
 
       function saveActivity(mi, si, value) {
         modules[mi].steps[si].activityText = value;
+        modules[mi].steps[si].dirty = true;
+        const statusEl = document.getElementById(`save-status-${mi}-${si}`);
+        if (statusEl) { statusEl.textContent = 'Saved locally'; statusEl.style.color = '#60a5fa'; }
         saveState();
       }
 

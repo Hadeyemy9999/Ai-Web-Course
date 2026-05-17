@@ -1,111 +1,218 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI Web Course - Landing Page</title>
-<link rel="stylesheet" href="styles.css">
-<style>
-  /* Base Layout */
-  body { 
-    overflow: auto; height: auto; min-height: 100vh; display: flex; flex-direction: column; 
-    background-color: #050510; /* Dark premium bg */
-    color: #f8fafc;
-    position: relative;
-    z-index: 0;
-  }
-  
-  /* Mesh Background Globs */
-  .bg-glow-1 {
-    position: absolute; top: -20vh; left: -10vw; width: 60vw; height: 60vw;
-    background: radial-gradient(circle, rgba(99,102,241,0.25) 0%, rgba(0,0,0,0) 60%);
-    z-index: -1; pointer-events: none; filter: blur(40px);
-  }
-  .bg-glow-2 {
-    position: absolute; bottom: -20vh; right: -10vw; width: 50vw; height: 50vw;
-    background: radial-gradient(circle, rgba(236,72,153,0.2) 0%, rgba(0,0,0,0) 60%);
-    z-index: -1; pointer-events: none; filter: blur(40px);
-  }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Webflyer - Landing Page</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    /* Base Layout */
+    body {
+      overflow: auto;
+      height: auto;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background-color: #050510;
+      /* Dark premium bg */
+      color: #f8fafc;
+      position: relative;
+      z-index: 0;
+    }
 
-  /* Glassmorphism Classes */
-  .glass-panel {
-    background: rgba(255, 255, 255, 0.03) !important;
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.05) !important;
-    border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
-    border-left: 1px solid rgba(255, 255, 255, 0.08) !important;
-    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
-    color: #e2e8f0;
-  }
+    /* Mesh Background Globs */
+    .bg-glow-1 {
+      position: absolute;
+      top: -20vh;
+      left: -10vw;
+      width: 60vw;
+      height: 60vw;
+      background: radial-gradient(circle, rgba(99, 102, 241, 0.25) 0%, rgba(0, 0, 0, 0) 60%);
+      z-index: -1;
+      pointer-events: none;
+      filter: blur(40px);
+    }
 
-  /* Overrides for specific components */
-  .landing-nav { 
-    display: flex; justify-content: space-between; align-items: center; padding: 20px 40px; 
-    background: rgba(5, 5, 16, 0.6) !important; 
-    backdrop-filter: blur(16px);
-    border-bottom: 1px solid rgba(255,255,255,0.05) !important;
-    position: sticky; top: 0; z-index: 50;
-  }
-  .landing-nav a { text-decoration: none; color: #cbd5e1; font-weight: 600; margin-left: 20px; transition: color 0.2s, text-shadow 0.2s; }
-  .landing-nav a:hover { color: #fff; text-shadow: 0 0 10px rgba(255,255,255,0.4); }
-  
-  .hero { text-align: center; padding: 120px 20px; }
-  .hero h1 { 
-    font-size: 64px; 
-    margin-bottom: 24px; 
-    font-weight: 800;
-    background: linear-gradient(to right, #818cf8, #e879f9, #f472b6);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    letter-spacing: -1px;
-  }
-  .hero p { font-size: 22px; color: #94a3b8; max-width: 700px; margin: 0 auto 40px; line-height: 1.6; }
-  
-  .btn-primary {
-    background: linear-gradient(135deg, #6366f1, #a855f7) !important;
-    box-shadow: 0 10px 20px -10px rgba(99,102,241,0.8);
-    border: 1px solid rgba(255,255,255,0.2) !important;
-  }
-  .btn-primary:hover { box-shadow: 0 15px 30px -10px rgba(99,102,241,1); }
+    .bg-glow-2 {
+      position: absolute;
+      bottom: -20vh;
+      right: -10vw;
+      width: 50vw;
+      height: 50vw;
+      background: radial-gradient(circle, rgba(236, 72, 153, 0.2) 0%, rgba(0, 0, 0, 0) 60%);
+      z-index: -1;
+      pointer-events: none;
+      filter: blur(40px);
+    }
 
-  section.section-padding { background: transparent !important; border: none !important; }
+    /* Glassmorphism Classes */
+    .glass-panel {
+      background: rgba(255, 255, 255, 0.03) !important;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.05) !important;
+      border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+      border-left: 1px solid rgba(255, 255, 255, 0.08) !important;
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+      color: #e2e8f0;
+    }
 
-  .curriculum-section { padding: 40px 20px 80px; max-width: 1000px; margin: 0 auto; text-align: center; }
-  .curriculum-section h2 { font-size: 36px; margin-bottom: 40px; color: #fff; }
-  .curriculum-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; text-align: left; }
-  
-  .curriculum-card, .feature-box {
-    padding: 24px; border-radius: var(--radius);
-    background: rgba(255, 255, 255, 0.03);
-    backdrop-filter: blur(16px);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-top: 1px solid rgba(255, 255, 255, 0.15);
-    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s;
-  }
-  .curriculum-card:hover, .feature-box:hover {
-    border-color: rgba(99,102,241,0.4);
-    box-shadow: 0 10px 30px -10px rgba(99,102,241,0.2);
-  }
-  .curriculum-card h3, .feature-box h3 { font-size: 18px; color: #fff; margin-bottom: 10px; }
-  .curriculum-card p, .feature-box p { font-size: 14px; color: #94a3b8; line-height: 1.5; }
-  .curriculum-card ul { color: #94a3b8 !important; }
+    /* Overrides for specific components */
+    .landing-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 40px;
+      background: rgba(5, 5, 16, 0.6) !important;
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
 
-  .site-footer { background: transparent !important; border-top: 1px solid rgba(255,255,255,0.05) !important; }
-  
-  /* Modal Overrides */
-  .modal { background: rgba(15,23,42,0.8) !important; backdrop-filter: blur(24px); border: 1px solid rgba(255,255,255,0.1) !important; color: #fff !important; }
-  .modal h3 { color: #fff !important; }
-  .modal input { background: rgba(0,0,0,0.3) !important; border: 1px solid rgba(255,255,255,0.1) !important; color: #fff !important; }
-  .modal input:focus { border-color: #818cf8 !important; }
-</style>
+    .landing-nav a {
+      text-decoration: none;
+      color: #cbd5e1;
+      font-weight: 600;
+      margin-left: 20px;
+      transition: color 0.2s, text-shadow 0.2s;
+    }
+
+    .landing-nav a:hover {
+      color: #fff;
+      text-shadow: 0 0 10px rgba(255, 255, 255, 0.4);
+    }
+
+    .hero {
+      text-align: center;
+      padding: 120px 20px;
+    }
+
+    .hero h1 {
+      font-size: 64px;
+      margin-bottom: 24px;
+      font-weight: 800;
+      background: linear-gradient(to right, #818cf8, #e879f9, #f472b6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: -1px;
+    }
+
+    .hero p {
+      font-size: 22px;
+      color: #94a3b8;
+      max-width: 700px;
+      margin: 0 auto 40px;
+      line-height: 1.6;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #6366f1, #a855f7) !important;
+      box-shadow: 0 10px 20px -10px rgba(99, 102, 241, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    }
+
+    .btn-primary:hover {
+      box-shadow: 0 15px 30px -10px rgba(99, 102, 241, 1);
+    }
+
+    section.section-padding {
+      background: transparent !important;
+      border: none !important;
+    }
+
+    .curriculum-section {
+      padding: 40px 20px 80px;
+      max-width: 1000px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .curriculum-section h2 {
+      font-size: 36px;
+      margin-bottom: 40px;
+      color: #fff;
+    }
+
+    .curriculum-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 20px;
+      text-align: left;
+    }
+
+    .curriculum-card,
+    .feature-box {
+      padding: 24px;
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-top: 1px solid rgba(255, 255, 255, 0.15);
+      transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s;
+    }
+
+    .curriculum-card:hover,
+    .feature-box:hover {
+      border-color: rgba(99, 102, 241, 0.4);
+      box-shadow: 0 10px 30px -10px rgba(99, 102, 241, 0.2);
+    }
+
+    .curriculum-card h3,
+    .feature-box h3 {
+      font-size: 18px;
+      color: #fff;
+      margin-bottom: 10px;
+    }
+
+    .curriculum-card p,
+    .feature-box p {
+      font-size: 14px;
+      color: #94a3b8;
+      line-height: 1.5;
+    }
+
+    .curriculum-card ul {
+      color: #94a3b8 !important;
+    }
+
+    .site-footer {
+      background: transparent !important;
+      border-top: 1px solid rgba(255, 255, 255, 0.05) !important;
+    }
+
+    /* Modal Overrides */
+    .modal {
+      background: rgba(15, 23, 42, 0.8) !important;
+      backdrop-filter: blur(24px);
+      border: 1px solid rgba(255, 255, 255, 0.1) !important;
+      color: #fff !important;
+    }
+
+    .modal h3 {
+      color: #fff !important;
+    }
+
+    .modal input {
+      background: rgba(0, 0, 0, 0.3) !important;
+      border: 1px solid rgba(255, 255, 255, 0.1) !important;
+      color: #fff !important;
+    }
+
+    .modal input:focus {
+      border-color: #818cf8 !important;
+    }
+  </style>
 </head>
+
 <body>
   <div class="bg-glow-1"></div>
   <div class="bg-glow-2"></div>
-  
+
   <nav class="landing-nav">
-    <h2 style="margin: 0;">🚀 AI Web Course</h2>
+    <h2 style="margin: 0;">🚀 Webflyer</h2>
     <div>
       <a href="index.html">Home</a>
       <a href="about.html">About</a>
@@ -116,11 +223,16 @@
 
   <main class="hero animate-fade-up">
     <h1>Learn to Build Websites with AI</h1>
-    <p>Join the interactive course today. Generate, design, and deploy web applications without writing a single line of code manually. Pay once, learn forever.</p>
-    <button class="btn btn-primary" style="font-size: 18px; padding: 16px 36px; border-radius: 8px; border: none; background: var(--accent); color: #fff; cursor: pointer; transition: transform 0.2s;" onclick="openAuthModal()" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">Get Access Now</button>
+    <p>Join the interactive course today. Generate, design, and deploy web applications without writing a single line of
+      code manually. Pay once, learn forever.</p>
+    <button class="btn btn-primary"
+      style="font-size: 18px; padding: 16px 36px; border-radius: 8px; border: none; background: var(--accent); color: #fff; cursor: pointer; transition: transform 0.2s;"
+      onclick="openAuthModal()" onmouseover="this.style.transform='scale(1.05)'"
+      onmouseout="this.style.transform='scale(1)'">Get Access Now</button>
   </main>
 
-  <section class="section-padding animate-fade-up" style="background: var(--card); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); margin-top: 40px;">
+  <section class="section-padding animate-fade-up"
+    style="background: var(--card); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); margin-top: 40px;">
     <div style="text-align: center; margin-bottom: 40px;">
       <h2 style="font-size: 36px; margin-bottom: 10px; color: var(--text);">Why This Course?</h2>
       <p style="color: var(--text-secondary);">Everything you need to go from idea to live website.</p>
@@ -129,17 +241,20 @@
       <div class="feature-box">
         <div class="feature-icon">🤖</div>
         <h3 style="color: var(--text);">AI-Powered Learning</h3>
-        <p style="color: var(--text-secondary); margin-top: 10px;">Learn how to prompt AI effectively to generate code, saving you hundreds of hours of manual typing.</p>
+        <p style="color: var(--text-secondary); margin-top: 10px;">Learn how to prompt AI effectively to generate code,
+          saving you hundreds of hours of manual typing.</p>
       </div>
       <div class="feature-box">
         <div class="feature-icon">🛠️</div>
         <h3 style="color: var(--text);">Interactive Sandbox</h3>
-        <p style="color: var(--text-secondary); margin-top: 10px;">Write prompts, execute code, and preview your work instantly inside our custom learning portal.</p>
+        <p style="color: var(--text-secondary); margin-top: 10px;">Write prompts, execute code, and preview your work
+          instantly inside our custom learning portal.</p>
       </div>
       <div class="feature-box">
         <div class="feature-icon">☁️</div>
         <h3 style="color: var(--text);">Cloud Synced Progress</h3>
-        <p style="color: var(--text-secondary); margin-top: 10px;">Your progress is saved securely to the cloud. Start on your laptop and finish on your desktop seamlessly.</p>
+        <p style="color: var(--text-secondary); margin-top: 10px;">Your progress is saved securely to the cloud. Start
+          on your laptop and finish on your desktop seamlessly.</p>
       </div>
     </div>
   </section>
@@ -150,7 +265,8 @@
       <div class="curriculum-grid">
         <div class="curriculum-card">
           <h3>1. Think Like a Builder</h3>
-          <p>Know your user before you build. User personas, information architecture, and the fundamentals of writing effective AI prompts.</p>
+          <p>Know your user before you build. User personas, information architecture, and the fundamentals of writing
+            effective AI prompts.</p>
           <ul style="margin-top: 15px; padding-left: 20px; font-size: 14px; color: var(--text-secondary);">
             <li>Course Overview & Workspace Setup</li>
             <li>The User Snapshot (UX Research)</li>
@@ -220,7 +336,8 @@
         </div>
         <div class="curriculum-card">
           <h3>8. Capstone: Build & Launch</h3>
-          <p>Your final project. Validate with real users, iterate based on feedback, and officially launch your site.</p>
+          <p>Your final project. Validate with real users, iterate based on feedback, and officially launch your site.
+          </p>
           <ul style="margin-top: 15px; padding-left: 20px; font-size: 14px; color: var(--text-secondary);">
             <li>Project Planning & Problem Statement</li>
             <li>Competitive Research</li>
@@ -229,8 +346,11 @@
           </ul>
         </div>
       </div>
-      <div style="position: absolute; bottom: 0; left: 0; right: 0; height: 350px; background: linear-gradient(to bottom, rgba(5,5,16,0), rgba(5,5,16,1) 80%); display: flex; align-items: flex-end; justify-content: center; padding-bottom: 20px; z-index: 10;">
-        <button class="btn btn-primary" style="font-size: 18px; padding: 14px 32px; border-radius: 8px; font-weight: bold; border: none; cursor: pointer; transform: translateY(-20px); box-shadow: 0 0 30px rgba(99,102,241,0.6);" onclick="openAuthModal()">Unlock Full Curriculum</button>
+      <div
+        style="position: absolute; bottom: 0; left: 0; right: 0; height: 350px; background: linear-gradient(to bottom, rgba(5,5,16,0), rgba(5,5,16,1) 80%); display: flex; align-items: flex-end; justify-content: center; padding-bottom: 20px; z-index: 10;">
+        <button class="btn btn-primary"
+          style="font-size: 18px; padding: 14px 32px; border-radius: 8px; font-weight: bold; border: none; cursor: pointer; transform: translateY(-20px); box-shadow: 0 0 30px rgba(99,102,241,0.6);"
+          onclick="openAuthModal()">Unlock Full Curriculum</button>
       </div>
     </div>
   </section>
@@ -241,7 +361,7 @@
       <a href="about.html">About</a>
       <a href="contact.html">Contact</a>
     </div>
-    <p>&copy; 2026 AI Web Course. All rights reserved. Master AI Web Development.</p>
+    <p>&copy; 2026 Webflyer. All rights reserved. Master AI Web Development.</p>
   </footer>
 
   <!-- Auth & Payment Modal -->
@@ -249,23 +369,47 @@
     <div class="modal" style="text-align: left;">
       <h3>Login / Register</h3>
       <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 20px;">
-        Sign in to access the course. New users must register first, and then make a one-time payment to unlock the course.
+        Sign in to access the course. New users must register first, and then make a one-time payment to unlock the
+        course.
       </p>
-      
-      <input type="email" id="auth-email" placeholder="Email address" required>
-      <input type="password" id="auth-password" placeholder="Password" required minlength="6">
-      <div id="auth-error" style="color: red; font-size: 13px; margin-bottom: 15px;"></div>
-      
-      <div style="display: flex; gap: 10px; margin-bottom: 20px;">
-        <button style="flex:1; padding: 12px; background: var(--bg); color: var(--text); border: 1px solid var(--border); border-radius: 8px; cursor: pointer; font-weight: 600; transition: 0.2s;" onclick="loginEmail()" onmouseover="this.style.background='var(--border)'" onmouseout="this.style.background='var(--bg)'">Login</button>
-        <button style="flex:1; padding: 12px; background: var(--accent); color: #fff; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; transition: 0.2s;" onclick="registerEmail()" onmouseover="this.style.background='#4f46e5'" onmouseout="this.style.background='var(--accent)'">Register</button>
+
+      <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+        <button id="tab-login"
+          style="flex:1; padding: 10px; background: var(--accent); color: #fff; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;"
+          onclick="switchAuthTab('login')">Login</button>
+        <button id="tab-register"
+          style="flex:1; padding: 10px; background: rgba(0,0,0,0.3); color: var(--text); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; cursor: pointer; font-weight: bold;"
+          onclick="switchAuthTab('register')">Register</button>
       </div>
 
-      <div style="text-align: center;">
-        <button style="background:none;border:none;color:var(--text-secondary);text-decoration:underline;cursor:pointer;font-size:14px;" onclick="closeAuthModal()">Cancel</button>
+      <div id="form-login">
+        <input type="email" id="login-email" placeholder="Email address" required>
+        <input type="password" id="login-password" placeholder="Password" required minlength="6">
+        <button id="btn-login"
+          style="width: 100%; padding: 12px; background: var(--accent); color: #fff; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; transition: 0.2s; margin-top: 5px;"
+          onclick="loginEmail()">Login</button>
+      </div>
+
+      <div id="form-register" style="display: none;">
+        <input type="text" id="reg-name" placeholder="Full Name" required>
+        <input type="tel" id="reg-phone" placeholder="Phone Number" required>
+        <input type="text" id="reg-level" placeholder="Experience Level (e.g. Beginner)" required>
+        <input type="email" id="reg-email" placeholder="Email address" required>
+        <input type="password" id="reg-password" placeholder="Password" required minlength="6">
+        <button id="btn-register"
+          style="width: 100%; padding: 12px; background: var(--accent); color: #fff; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; transition: 0.2s; margin-top: 5px;"
+          onclick="registerEmail()">Register</button>
+      </div>
+
+      <div id="auth-error" style="color: red; font-size: 13px; margin-top: 15px;"></div>
+
+      <div style="text-align: center; margin-top: 15px;">
+        <button
+          style="background:none;border:none;color:var(--text-secondary);text-decoration:underline;cursor:pointer;font-size:14px;"
+          onclick="closeAuthModal()">Cancel</button>
       </div>
     </div>
-    </div>
+  </div>
   </div>
 
   <!-- Payment Modal -->
@@ -275,13 +419,15 @@
       <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 20px;">
         You're one step away! Complete your one-time payment to get full lifetime access.
       </p>
-      
-      <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.1);">
+
+      <div
+        style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.1);">
         <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
           <span>Course Price</span>
           <span style="text-decoration: line-through; color: var(--text-secondary);">NGN 10,000</span>
         </div>
-        <div style="display: flex; justify-content: space-between; font-size: 20px; font-weight: bold; color: var(--success);">
+        <div
+          style="display: flex; justify-content: space-between; font-size: 20px; font-weight: bold; color: var(--success);">
           <span>Discounted Price</span>
           <span id="final-price">NGN 7,000</span>
         </div>
@@ -289,14 +435,19 @@
 
       <div style="display: flex; gap: 10px; margin-bottom: 5px;">
         <input type="text" id="coupon-code" placeholder="Enter Coupon Code" style="margin-bottom: 0;">
-        <button onclick="applyCoupon()" style="padding: 0 15px; background: rgba(255,255,255,0.1); color: #fff; border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; cursor: pointer; transition: 0.2s;">Apply</button>
+        <button onclick="applyCoupon()"
+          style="padding: 0 15px; background: rgba(255,255,255,0.1); color: #fff; border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; cursor: pointer; transition: 0.2s;">Apply</button>
       </div>
       <div id="coupon-msg" style="font-size: 13px; margin-bottom: 15px; height: 18px;"></div>
 
-      <button id="pay-btn" style="width: 100%; padding: 14px; background: linear-gradient(135deg, #10b981, #059669); color: #fff; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 16px; transition: 0.2s; box-shadow: 0 4px 15px rgba(16,185,129,0.3);" onclick="startPayment()">Pay Securely with Paystack</button>
-      
+      <button id="pay-btn"
+        style="width: 100%; padding: 14px; background: linear-gradient(135deg, #10b981, #059669); color: #fff; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 16px; transition: 0.2s; box-shadow: 0 4px 15px rgba(16,185,129,0.3);"
+        onclick="startPayment()">Pay Securely with Paystack</button>
+
       <div style="text-align: center; margin-top: 15px;">
-        <button style="background:none;border:none;color:var(--text-secondary);text-decoration:underline;cursor:pointer;font-size:14px;" onclick="closePaymentModal()">Cancel & Log Out</button>
+        <button
+          style="background:none;border:none;color:var(--text-secondary);text-decoration:underline;cursor:pointer;font-size:14px;"
+          onclick="closePaymentModal()">Cancel & Log Out</button>
       </div>
     </div>
   </div>
@@ -314,21 +465,12 @@
 
     if (SUPABASE_URL && SUPABASE_KEY && window.supabase) {
       supaClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-      
+
       const handleSession = (session) => {
         if (!session?.user) {
           document.getElementById('nav-auth-btn').textContent = 'Login / Register';
-          return;
-        }
-        
-        document.getElementById('nav-auth-btn').textContent = 'My Course';
-        
-        if (session.user.user_metadata?.has_paid) {
-          window.location.href = 'course.html';
-        } else if (!paymentPrompted) {
-          paymentPrompted = true;
-          closeAuthModal();
-          triggerPaystack(session.user.email);
+        } else {
+          document.getElementById('nav-auth-btn').textContent = 'My Course';
         }
       };
 
@@ -336,11 +478,34 @@
       supaClient.auth.onAuthStateChange((_event, session) => handleSession(session));
     }
 
-    function openAuthModal() { 
+    function switchAuthTab(tab) {
+      document.getElementById('auth-error').textContent = '';
+      if (tab === 'login') {
+        document.getElementById('form-login').style.display = 'block';
+        document.getElementById('form-register').style.display = 'none';
+        document.getElementById('tab-login').style.background = 'var(--accent)';
+        document.getElementById('tab-login').style.color = '#fff';
+        document.getElementById('tab-login').style.border = 'none';
+        document.getElementById('tab-register').style.background = 'rgba(0,0,0,0.3)';
+        document.getElementById('tab-register').style.color = 'var(--text)';
+        document.getElementById('tab-register').style.border = '1px solid rgba(255,255,255,0.1)';
+      } else {
+        document.getElementById('form-login').style.display = 'none';
+        document.getElementById('form-register').style.display = 'block';
+        document.getElementById('tab-register').style.background = 'var(--accent)';
+        document.getElementById('tab-register').style.color = '#fff';
+        document.getElementById('tab-register').style.border = 'none';
+        document.getElementById('tab-login').style.background = 'rgba(0,0,0,0.3)';
+        document.getElementById('tab-login').style.color = 'var(--text)';
+        document.getElementById('tab-login').style.border = '1px solid rgba(255,255,255,0.1)';
+      }
+    }
+
+    function openAuthModal() {
       if (supaClient) {
         supaClient.auth.getSession().then(({ data: { session } }) => {
           if (session?.user) {
-            if (session.user.user_metadata?.has_paid) {
+            if (session.user.user_metadata?.has_paid === true) {
               window.location.href = 'course.html';
             } else {
               triggerPaystack(session.user.email);
@@ -353,42 +518,77 @@
         document.getElementById('auth-modal').classList.add('show');
       }
     }
-    
+
     function closeAuthModal() { document.getElementById('auth-modal').classList.remove('show'); document.getElementById('auth-error').textContent = ''; }
 
     async function loginEmail() {
       if (!supaClient) return alert('Configure Supabase credentials first.');
-      const email = document.getElementById('auth-email').value;
-      const password = document.getElementById('auth-password').value;
+      const email = document.getElementById('login-email').value;
+      const password = document.getElementById('login-password').value;
       const errDiv = document.getElementById('auth-error');
-      
-      errDiv.textContent = 'Logging in...';
-      const { error } = await supaClient.auth.signInWithPassword({ email, password });
-      if (error) errDiv.textContent = error.message;
+      const btn = document.getElementById('btn-login');
+
+      if (!email || !password) return errDiv.textContent = 'Please fill all fields.';
+
+      btn.disabled = true;
+      btn.textContent = 'Logging in...';
+      errDiv.textContent = '';
+
+      const { data, error } = await supaClient.auth.signInWithPassword({ email, password });
+      if (error) {
+        errDiv.textContent = error.message;
+        btn.disabled = false;
+        btn.textContent = 'Login';
+      } else {
+        errDiv.textContent = 'Login successful! Checking access...';
+        if (data?.session?.user?.user_metadata?.has_paid === true) {
+          window.location.href = 'course.html';
+        } else {
+          closeAuthModal();
+          triggerPaystack(email);
+        }
+        btn.disabled = false;
+        btn.textContent = 'Login';
+      }
     }
 
     async function registerEmail() {
       if (!supaClient) return alert('Configure Supabase credentials first.');
-      const email = document.getElementById('auth-email').value;
-      const password = document.getElementById('auth-password').value;
+      const email = document.getElementById('reg-email').value;
+      const password = document.getElementById('reg-password').value;
+      const name = document.getElementById('reg-name').value;
+      const phone = document.getElementById('reg-phone').value;
+      const level = document.getElementById('reg-level').value;
       const errDiv = document.getElementById('auth-error');
-      
-      if (!email || !password) {
-        errDiv.textContent = 'Email and password are required.';
+      const btn = document.getElementById('btn-register');
+
+      if (!email || !password || !name || !phone || !level) {
+        errDiv.textContent = 'Please fill all fields.';
         return;
       }
 
-      errDiv.textContent = 'Creating account...';
-      const { data, error } = await supaClient.auth.signUp({ email, password });
+      btn.disabled = true;
+      btn.textContent = 'Creating account...';
+      errDiv.textContent = '';
+
+      const { data, error } = await supaClient.auth.signUp({
+        email,
+        password,
+        options: {
+          data: { full_name: name, phone: phone, experience_level: level, has_paid: false }
+        }
+      });
+
       if (error) {
         errDiv.textContent = error.message;
+        btn.disabled = false;
+        btn.textContent = 'Register';
       } else {
         errDiv.textContent = 'Account created! Initializing payment...';
-        
-        // Force the payment modal to open immediately to ensure UX doesn't get stuck
-        paymentPrompted = true;
         closeAuthModal();
         triggerPaystack(email);
+        btn.disabled = false;
+        btn.textContent = 'Register';
       }
     }
 
@@ -398,8 +598,8 @@
       document.getElementById('payment-modal').classList.add('show');
     }
 
-    async function closePaymentModal() { 
-      document.getElementById('payment-modal').classList.remove('show'); 
+    async function closePaymentModal() {
+      document.getElementById('payment-modal').classList.remove('show');
       if (supaClient) await supaClient.auth.signOut();
       window.location.reload();
     }
@@ -442,20 +642,20 @@
           payBtn.textContent = originalText;
           return;
         }
-        
+
         let handler = PaystackPop.setup({
-          key: PAYSTACK_PUBLIC_KEY, 
+          key: PAYSTACK_PUBLIC_KEY,
           email: session.user.email,
-          amount: currentPrice * 100, 
-          currency: 'NGN', 
-          callback: function(response) {
+          amount: currentPrice * 100,
+          currency: 'NGN',
+          callback: function (response) {
             payBtn.textContent = 'Updating account...';
             supaClient.auth.updateUser({ data: { has_paid: true } }).then(() => {
               alert("Payment Successful! Welcome to the course.");
               window.location.href = 'course.html';
             });
           },
-          onClose: function() {
+          onClose: function () {
             // They closed the Paystack iframe, but our payment modal remains open
             payBtn.textContent = originalText;
           }
@@ -468,4 +668,5 @@
     }
   </script>
 </body>
+
 </html>

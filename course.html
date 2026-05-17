@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Build Websites with AI — LMS Portal</title>
+  <title>Webflyer — LMS Portal</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 
@@ -12,8 +12,8 @@
   <div class="app">
     <aside class="sidebar">
       <div class="sidebar-header">
-        <h1>🚀 Build Websites with AI</h1>
-        <p>From Prompt to Published</p>
+        <h1>🚀 Webflyer</h1>
+        <p>Master AI Web Development</p>
       </div>
       <div class="progress-tracker">
         <div class="progress-label"><span>Course Progress</span><span id="progress-pct">0%</span></div>
@@ -85,7 +85,7 @@
         }) => {
           supaUser = session?.user || null;
 
-          if (!supaUser || !supaUser.user_metadata?.has_paid) {
+          if (!supaUser || supaUser.user_metadata?.has_paid !== true) {
             window.location.href = 'index.html'; // Protect route
             return;
           }
@@ -96,7 +96,7 @@
 
         supaClient.auth.onAuthStateChange((_event, session) => {
           supaUser = session?.user || null;
-          if (!supaUser || !supaUser.user_metadata?.has_paid) window.location.href = 'index.html';
+          if (!supaUser || supaUser.user_metadata?.has_paid !== true) window.location.href = 'index.html';
           updateSupaUI();
         });
       }

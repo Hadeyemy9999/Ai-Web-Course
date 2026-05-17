@@ -15,7 +15,7 @@ Before you begin, ensure you have the following:
 
 1. Go to [github.com](https://github.com/) and log in.
 2. In the top right corner, click the **+** icon and select **New repository**.
-3. Name your repository (e.g., `my-ai-website`).
+3. Name your repository (e.g., `my-ai-website`). https://github.com/Hadeyemy9999/Ai-Web-Course.git
 4. You can add an optional description.
 5. Keep it **Public** (recommended if you want to host it for free later).
 6. **Do NOT** check the box to "Add a README file" (we want an empty repository).
@@ -61,8 +61,7 @@ Copy those three lines of code and paste them into your terminal. They will look
 
 1. **Link your local folder to GitHub:**
    ```bash
-   git remote add origin https://github.com/YourUsername/your-repo-name.git
-   ```
+   git remote add origin https://github.com/Hadeyemy9999/Ai-Web-Course.git
 
 2. **Ensure your main branch is named 'main':**
    ```bash

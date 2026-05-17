@@ -47,9 +47,8 @@
   <!-- Supabase Modal -->
     <div class="modal-overlay" id="supabase-modal">
       <div class="modal">
-        <h3 id="supa-title">☁️ Cloud Sync</h3>
-        <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 15px;">Sync your progress across
-          devices. Requires Supabase URL and Anon Key in source code. </p>
+        <h3 id="supa-title">👤 Profile Setup</h3>
+        <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 15px;">Manage your profile information and course settings. All changes are saved securely.</p>
         <div id="supa-auth-forms"><input type="email" id="supa-email" placeholder="Email address"><input type="password"
             id="supa-password" placeholder="Password">
           <div id="supa-error" style="color: red; font-size: 13px; margin-bottom: 10px;"></div>
@@ -58,12 +57,29 @@
               onclick="handleSupaAuth('signup')">Sign Up</button></div>
         </div>
         <div id="supa-logged-in" style="display: none;">
-          <p style="margin-bottom: 15px;">You are currently logged in.</p>
-          <label for="supa-profile-name" style="font-size: 13px; color: var(--text-secondary); display: block; margin-bottom: 6px;">Profile Name</label>
-          <input type="text" id="supa-profile-name" placeholder="Enter your profile name"
-            style="width: 100%; margin-bottom: 10px; padding: 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); color: #fff;">
-          <button class="btn btn-primary" style="width: 100%; margin-bottom: 10px;" onclick="saveProfileSettings()">Save Profile</button>
+          <div style="background: rgba(255,255,255,0.03); padding: 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 15px;">
+            <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 8px;">Full Name</div>
+            <div id="supa-full-name" style="font-size: 14px; color: #fff; font-weight: 600; margin-bottom: 12px;">—</div>
+            
+            <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 8px;">Email</div>
+            <div id="supa-email-display" style="font-size: 14px; color: #fff; margin-bottom: 12px;">—</div>
+            
+            <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 8px;">Phone Number</div>
+            <div id="supa-phone-display" style="font-size: 14px; color: #fff; margin-bottom: 12px;">—</div>
+          </div>
+          
+          <label for="supa-username" style="font-size: 13px; color: var(--text-secondary); display: block; margin-bottom: 6px;">Username</label>
+          <input type="text" id="supa-username" placeholder="Enter username"
+            style="width: 100%; margin-bottom: 12px; padding: 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); color: #fff;">
+          
+          <button class="btn btn-primary" style="width: 100%; margin-bottom: 10px;" onclick="saveProfileSettings()">Save Username</button>
           <button class="btn btn-primary" style="width: 100%; margin-bottom: 10px;" onclick="syncToCloud()">Upload Progress</button>
+          
+          <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px; background: rgba(255,255,255,0.02); border-radius: 6px; margin-bottom: 10px;">
+            <label for="supa-dark-mode" style="font-size: 13px; color: #fff; margin: 0; cursor: pointer;">🌓 Dark Mode</label>
+            <input type="checkbox" id="supa-dark-mode" onchange="handleDarkModeToggle(this.checked)" style="cursor: pointer; width: 18px; height: 18px;">
+          </div>
+          
           <button class="btn btn-secondary" style="width: 100%;" onclick="handleSupaLogout()">Log Out</button>
         </div>
         <div style="margin-top: 15px; text-align: center;"><button
@@ -145,10 +161,20 @@
           `;
           document.getElementById('supa-auth-forms').style.display = 'none';
           document.getElementById('supa-logged-in').style.display = 'block';
-          const profileNameInput = document.getElementById('supa-profile-name');
-          if (profileNameInput) {
-            profileNameInput.value = supaUser?.user_metadata?.display_name || (email.includes('@') ? email.split('@')[0] : email);
-          }
+          
+          // Populate profile fields from user metadata
+          const meta = supaUser?.user_metadata || {};
+          const fullNameEl = document.getElementById('supa-full-name');
+          const emailEl = document.getElementById('supa-email-display');
+          const phoneEl = document.getElementById('supa-phone-display');
+          const usernameInput = document.getElementById('supa-username');
+          const darkModeCheckbox = document.getElementById('supa-dark-mode');
+          
+          if (fullNameEl) fullNameEl.textContent = meta.full_name || '—';
+          if (emailEl) emailEl.textContent = supaUser?.email || '—';
+          if (phoneEl) phoneEl.textContent = meta.phone || '—';
+          if (usernameInput) usernameInput.value = meta.username || '';
+          if (darkModeCheckbox) darkModeCheckbox.checked = document.body.classList.contains('dark-mode');
         } else {
           container.innerHTML = `<button onclick="openSupaModal()" id="supa-btn" style="width: 100%; background: rgba(99,102,241,0.2); color: #fff; border: 1px solid rgba(99,102,241,0.5); padding: 8px; border-radius: 6px; cursor: pointer; transition: 0.2s;">☁️ Cloud Sync (Login)</button>`;
           document.getElementById('supa-auth-forms').style.display = 'block';
@@ -194,19 +220,19 @@
 
       async function saveProfileSettings() {
         if (!supaClient || !supaUser) return;
-        const nameInput = document.getElementById('supa-profile-name');
+        const usernameInput = document.getElementById('supa-username');
         const errDiv = document.getElementById('supa-error');
-        if (!nameInput || !errDiv) return;
+        if (!usernameInput || !errDiv) return;
 
-        const profileName = nameInput.value.trim();
+        const username = usernameInput.value.trim();
         errDiv.style.color = '#ef4444';
-        if (!profileName) {
-          errDiv.textContent = 'Enter a profile name.';
+        if (!username) {
+          errDiv.textContent = 'Enter a username.';
           return;
         }
 
-        errDiv.textContent = 'Saving profile...';
-        const { data, error } = await supaClient.auth.updateUser({ data: { display_name: profileName } });
+        errDiv.textContent = 'Saving username...';
+        const { data, error } = await supaClient.auth.updateUser({ data: { username: username } });
         if (error) {
           errDiv.textContent = error.message;
           return;
@@ -214,8 +240,12 @@
 
         supaUser = data.user || supaUser;
         errDiv.style.color = '#10b981';
-        errDiv.textContent = 'Profile updated.';
-        updateSupaUI();
+        errDiv.textContent = 'Username updated.';
+      }
+
+      function handleDarkModeToggle(isDark) {
+        document.body.classList.toggle('dark-mode', isDark);
+        localStorage.setItem('lms-dark-mode', isDark);
       }
 
       async function syncToCloud() {

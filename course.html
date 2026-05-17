@@ -725,6 +725,66 @@
         if (typeof syncToCloud === 'function') syncToCloud();
       }
 
+      // Sync to Supabase for authenticated users
+      async function syncToCloud() {
+        if (!supaClient) return;
+        try {
+          const state = {
+            currentModule,
+            currentStep,
+            modules: modules.map(m => ({
+              completed: m.completed || false,
+              checks: m.checks || [],
+              steps: m.steps.map(s => ({ activityText: s.activityText || '' }))
+            }))
+          };
+
+          const { data: { session } } = await supaClient.auth.getSession();
+          if (!session || !session.user) return;
+
+          await supaClient.from('user_progress').upsert({ user_id: session.user.id, state }, { returning: 'minimal' });
+          console.log('Synced progress to cloud');
+        } catch (err) {
+          console.error('Cloud sync failed', err);
+        }
+      }
+
+      // Fetch saved state from Supabase and merge into current modules
+      async function syncFromCloud() {
+        if (!supaClient) return;
+        try {
+          const { data: { session } } = await supaClient.auth.getSession();
+          if (!session || !session.user) return;
+
+          const { data, error } = await supaClient.from('user_progress').select('state').eq('user_id', session.user.id).maybeSingle();
+          if (error) {
+            console.error('Fetch progress error', error);
+            return;
+          }
+          if (!data || !data.state) return;
+
+          const cloud = data.state;
+          if (cloud.currentModule != null) currentModule = cloud.currentModule;
+          if (cloud.currentStep != null) currentStep = cloud.currentStep;
+
+          // merge module-level activityText, checks, completed
+          cloud.modules && cloud.modules.forEach((cm, mi) => {
+            if (!modules[mi]) return;
+            modules[mi].completed = cm.completed || modules[mi].completed;
+            modules[mi].checks = cm.checks || modules[mi].checks || [];
+            cm.steps && cm.steps.forEach((cs, si) => {
+              if (modules[mi].steps[si]) modules[mi].steps[si].activityText = cs.activityText || modules[mi].steps[si].activityText || '';
+            });
+          });
+
+          saveState();
+          renderAll();
+          console.log('Loaded progress from cloud');
+        } catch (err) {
+          console.error('Cloud fetch failed', err);
+        }
+      }
+
       function goToModuleAndStep(modIdx, stepIdx) {
         currentModule = modIdx;
         currentStep = stepIdx;
@@ -863,7 +923,7 @@
         step.activityText || ''
       }
 
-      </textarea> <div class="save-hint" >💾 Auto-saved to your browser</div> </div> `;
+      </textarea> </div> `;
 
         // Checklist (only on last step)
         if (isLastStep) {

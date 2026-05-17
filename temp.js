@@ -108,32 +108,25 @@
         if (!supaClient || !supaUser) return;
         const stateStr = localStorage.getItem('lms-state');
         if (!stateStr) return;
-
-        const {
-          error
-        }
-
-          = await supaClient.from('user_progress').upsert({
-            id: supaUser.id, state_data: JSON.parse(stateStr)
-          });
-        if (error) console.error('Cloud save error:', error);
+        try {
+          const stateObj = JSON.parse(stateStr);
+          const { error } = await supaClient.from('user_progress').upsert({ user_id: supaUser.id, state: stateObj }, { returning: 'minimal' });
+          if (error) console.error('Cloud save error:', error);
+        } catch (err) { console.error('Cloud save error', err); }
       }
 
       async function syncFromCloud() {
         if (!supaClient || !supaUser) return;
 
-        const {
-          data,
-          error
-        }
-
-          = await supaClient.from('user_progress').select('state_data').eq('id', supaUser.id).single();
-
-        if (data && data.state_data) {
-          localStorage.setItem('lms-state', JSON.stringify(data.state_data));
-          loadState();
-          renderAll();
-        }
+        try {
+          const { data, error } = await supaClient.from('user_progress').select('state').eq('user_id', supaUser.id).maybeSingle();
+          if (error) return console.error('Cloud fetch error', error);
+          if (data && data.state) {
+            localStorage.setItem('lms-state', JSON.stringify(data.state));
+            loadState();
+            renderAll();
+          }
+        } catch (err) { console.error('Cloud fetch failed', err); }
       }
 
       // =========================
@@ -784,6 +777,7 @@
       }
 
       </textarea> <div class="save-hint" >💾 Auto-saved to your browser</div> </div> `;
+      </textarea> </div> `;
 
         // Checklist (only on last step)
         if (isLastStep) {

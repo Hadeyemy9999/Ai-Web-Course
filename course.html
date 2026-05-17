@@ -58,9 +58,13 @@
               onclick="handleSupaAuth('signup')">Sign Up</button></div>
         </div>
         <div id="supa-logged-in" style="display: none;">
-          <p style="margin-bottom: 15px;">You are currently logged in.</p><button class="btn btn-primary"
-            style="width: 100%; margin-bottom: 10px;" onclick="syncToCloud()">Force Save to Cloud</button><button
-            class="btn btn-secondary" style="width: 100%;" onclick="handleSupaLogout()">Log Out</button>
+          <p style="margin-bottom: 15px;">You are currently logged in.</p>
+          <label for="supa-profile-name" style="font-size: 13px; color: var(--text-secondary); display: block; margin-bottom: 6px;">Profile Name</label>
+          <input type="text" id="supa-profile-name" placeholder="Enter your profile name"
+            style="width: 100%; margin-bottom: 10px; padding: 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); color: #fff;">
+          <button class="btn btn-primary" style="width: 100%; margin-bottom: 10px;" onclick="saveProfileSettings()">Save Profile</button>
+          <button class="btn btn-primary" style="width: 100%; margin-bottom: 10px;" onclick="syncToCloud()">Upload Progress</button>
+          <button class="btn btn-secondary" style="width: 100%;" onclick="handleSupaLogout()">Log Out</button>
         </div>
         <div style="margin-top: 15px; text-align: center;"><button
             style="background:none;border:none;color:var(--text-secondary);text-decoration:underline;cursor:pointer;font-size:13px;"
@@ -141,6 +145,10 @@
           `;
           document.getElementById('supa-auth-forms').style.display = 'none';
           document.getElementById('supa-logged-in').style.display = 'block';
+          const profileNameInput = document.getElementById('supa-profile-name');
+          if (profileNameInput) {
+            profileNameInput.value = supaUser?.user_metadata?.display_name || (email.includes('@') ? email.split('@')[0] : email);
+          }
         } else {
           container.innerHTML = `<button onclick="openSupaModal()" id="supa-btn" style="width: 100%; background: rgba(99,102,241,0.2); color: #fff; border: 1px solid rgba(99,102,241,0.5); padding: 8px; border-radius: 6px; cursor: pointer; transition: 0.2s;">☁️ Cloud Sync (Login)</button>`;
           document.getElementById('supa-auth-forms').style.display = 'block';
@@ -182,6 +190,32 @@
 
       async function handleSupaLogout() {
         if (supaClient) await supaClient.auth.signOut();
+      }
+
+      async function saveProfileSettings() {
+        if (!supaClient || !supaUser) return;
+        const nameInput = document.getElementById('supa-profile-name');
+        const errDiv = document.getElementById('supa-error');
+        if (!nameInput || !errDiv) return;
+
+        const profileName = nameInput.value.trim();
+        errDiv.style.color = '#ef4444';
+        if (!profileName) {
+          errDiv.textContent = 'Enter a profile name.';
+          return;
+        }
+
+        errDiv.textContent = 'Saving profile...';
+        const { data, error } = await supaClient.auth.updateUser({ data: { display_name: profileName } });
+        if (error) {
+          errDiv.textContent = error.message;
+          return;
+        }
+
+        supaUser = data.user || supaUser;
+        errDiv.style.color = '#10b981';
+        errDiv.textContent = 'Profile updated.';
+        updateSupaUI();
       }
 
       async function syncToCloud() {
